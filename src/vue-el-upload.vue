@@ -1,19 +1,22 @@
 <template>
   <div>
-    <el-dialog class="m-uploads-dialog"
+    <el-dialog
+      class="m-uploads-dialog"
       :title="title"
       :visible.sync="dialogVisible"
       :close-on-click-modal="close_on_click_modal"
       width="650px"
       append-to-body
-      @open="do_open_callback">
+      @open="do_open_callback"
+    >
       <div class="m-uploads">
         <!-- 头部按钮 s-->
         <header class="m-uploads-header">
           <!-- 选择文件按钮 -->
           <ul class="_header_box">
             <li>
-              <file-upload class="_btn"
+              <file-upload
+                class="_btn"
                 ref="upload"
                 :name="name"
                 :size="size"
@@ -26,81 +29,101 @@
                 :path="path"
                 @input-filter="do_files_filter"
                 @input-file="do_select_file"
-                :post-action="postAction">
+                :post-action="postAction"
+              >
                 <i class="el-icon-plus"></i>
                 选择文件
               </file-upload>
               <!-- 上传按钮 -->
-              <el-button class="_ml20"
+              <el-button
+                class="_ml20"
                 type="success"
                 icon="el-icon-upload2"
                 size="mini"
                 v-if="!$refs.upload || !$refs.upload.active"
                 :disabled="cp_upload_btn_disabled"
-                @click.prevent="$refs.upload.active = true">开始上传
+                @click.prevent="$refs.upload.active = true"
+                >开始上传
               </el-button>
               <!-- 停止按钮 -->
-              <el-button class="_ml20"
+              <el-button
+                class="_ml20"
                 type="danger"
                 icon="el-icon-remove"
                 size="mini"
                 v-else
-                @click.prevent="$refs.upload.active = false">停止上传
+                @click.prevent="$refs.upload.active = false"
+                >停止上传
               </el-button>
             </li>
             <li>
-              <span class="_hint">允许上传文件数：</span><strong class="_success_num">{{ cp_success_num }}</strong><strong>/</strong><strong class="_maximun">{{ maximum }}</strong>
+              <span class="_hint">允许上传文件数：</span
+              ><strong class="_success_num">{{ cp_success_num }}</strong
+              ><strong>/</strong><strong class="_maximun">{{ maximum }}</strong>
             </li>
           </ul>
         </header>
         <!-- 头部按钮 e -->
 
         <!-- 上传文件列表s -->
-        <el-form :model="rule_form"
-          :rules="rule_form.rules"
-          ref="rule_form">
-          <el-table class="m-uploads-table"
+        <el-form :model="rule_form" :rules="rule_form.rules" ref="rule_form">
+          <el-table
+            class="m-uploads-table"
             style="width:100%"
             :height="cp_height"
-            :data="rule_form.files">
-            <el-table-column prop="thumb"
+            :data="rule_form.files"
+          >
+            <el-table-column
+              prop="thumb"
               width="80"
               label="文件类型"
-              align="center">
+              align="center"
+            >
               <template slot-scope="{row}">
-                <span v-if="row.thumb"
+                <span
+                  v-if="row.thumb"
                   class="_type"
                   :style="{
                     background: 'url(' + row.thumb + ') no-repeat  top/cover'
-                  }" />
+                  }"
+                />
                 <span v-else>未知</span>
               </template>
             </el-table-column>
-            <el-table-column prop="name"
+            <el-table-column
+              prop="name"
               label="文件名称"
               header-align="center"
-              show-overflow-tooltip>
+              show-overflow-tooltip
+            >
               <template slot-scope="{row, $index}">
                 <!-- {{ row.name }} -->
                 <span v-if="row.status !== 'edit'">{{ row.name }}</span>
-                <el-form-item :prop="'files.' + $index + '.name'"
-                  :rules="rule_form.rules.name">
-                  <el-input v-model="row.name"
+                <el-form-item
+                  :prop="'files.' + $index + '.name'"
+                  :rules="rule_form.rules.name"
+                >
+                  <el-input
+                    v-model="row.name"
                     size="mini"
                     v-if="row.status === 'edit'"
-                    placeholder="请输入文件名"></el-input>
+                    placeholder="请输入文件名"
+                  ></el-input>
                 </el-form-item>
-                <el-progress v-if="row.active || row.progress !== '0.00'"
+                <el-progress
+                  v-if="row.active || row.progress !== '0.00'"
                   :text-inside="true"
                   :stroke-width="17"
-                  :percentage="row.progress * 1"></el-progress>
-                <ul class="_file_info_box"
-                  v-if="row.status !== 'edit'">
+                  :percentage="row.progress * 1"
+                ></el-progress>
+                <ul class="_file_info_box" v-if="row.status !== 'edit'">
                   <li>
-                    <span v-if="row.active || row.progress !== '0.00'">{{
+                    <span v-if="row.active || row.progress !== '0.00'"
+                      >{{
                         (row.size * (row.progress / 100)) | formatSize
                       }}
-                      / </span>{{ row.size | formatSize }}
+                      / </span
+                    >{{ row.size | formatSize }}
                   </li>
                   <li v-if="row.active || row.progress !== '0.00'">
                     {{ row.speed | formatSize }} / 秒
@@ -108,43 +131,49 @@
                 </ul>
               </template>
             </el-table-column>
-            <el-table-column prop="speed"
+            <el-table-column
+              prop="speed"
               label="状态"
               align="center"
-              width="100">
+              width="100"
+            >
               <template slot-scope="{row}">
-                <span v-if="row.error"
-                  class="_error">{{
+                <span v-if="row.error" class="_error">{{
                   row.error | formatError
                 }}</span>
-                <span v-else-if="row.success"
-                  class="_success">成功</span>
-                <span v-else-if="row.active"
-                  class="_warning">上传中</span>
+                <span v-else-if="row.success" class="_success">成功</span>
+                <span v-else-if="row.active" class="_warning">上传中</span>
                 <span v-else>未上传</span>
               </template>
             </el-table-column>
-            <el-table-column prop="address"
+            <el-table-column
+              prop="address"
               label="操作"
               align="center"
-              width="100">
+              width="100"
+            >
               <template slot-scope="{row}">
                 <!-- {{row.status}} -->
 
                 <ul class="_action_box">
                   <li v-if="row.status === 'edit'">
-                    <el-button type="text"
-                      @click.prevent="do_file_save_name(row)">保存
+                    <el-button
+                      type="text"
+                      @click.prevent="do_file_save_name(row)"
+                      >保存
                     </el-button>
                   </li>
                   <li v-if="row.status === 'init'">
-                    <el-button type="text"
-                      @click.prevent="do_file_edit_name(row)">修改
+                    <el-button
+                      type="text"
+                      @click.prevent="do_file_edit_name(row)"
+                      >修改
                     </el-button>
                   </li>
 
                   <li v-if="row.status == 'error' || row.status == 'stop'">
-                    <el-button type="text"
+                    <el-button
+                      type="text"
                       @click.prevent="
                         $refs.upload.update(row, {
                           active: true,
@@ -152,22 +181,30 @@
                           progress: '0.00',
                           status: 'active'
                         })
-                      ">重传
+                      "
+                      >重传
                     </el-button>
                   </li>
-                  <li v-if="
+                  <li
+                    v-if="
                       ['init', 'error', 'stop', 'edit'].includes(row.status)
-                    ">
-                    <el-button type="text"
-                      @click.prevent="$refs.upload.remove(row)">删除
+                    "
+                  >
+                    <el-button
+                      type="text"
+                      @click.prevent="$refs.upload.remove(row)"
+                      >删除
                     </el-button>
                   </li>
 
                   <li v-if="row.success">
-                    <a class="_download_btn"
+                    <a
+                      class="_download_btn"
                       :href="row | formatResponse"
                       :download="row.name"
-                      target="_blank">下载</a>
+                      target="_blank"
+                      >下载</a
+                    >
                   </li>
                 </ul>
               </template>
@@ -175,19 +212,16 @@
           </el-table>
         </el-form>
 
-        <ul slot="footer"
-          class="_dialog-footer">
+        <ul slot="footer" class="_dialog-footer">
+          <li>允许上传文件类型：【 {{ extensions.join('，') }} 】</li>
           <li>
-            允许上传文件类型：【 {{extensions.join('，')}} 】
-
-          </li>
-          <li>
-            <el-button type="primary"
+            <el-button
+              type="primary"
               size="medium"
-              @click="dialogVisible = false">关闭</el-button>
-
+              @click="dialogVisible = false"
+              >关闭</el-button
+            >
           </li>
-
         </ul>
       </div>
     </el-dialog>
@@ -353,7 +387,6 @@
   margin-left: 20px;
 }
 </style>
-
 
 <script>
 import {
