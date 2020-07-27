@@ -9,6 +9,10 @@ docs/index.html
 docs/*.woff
 docs/*.ttf
 
+server/node_modules
+server/package-lock.json
+
+
 # Editor directories and files
 .idea
 .vscode
